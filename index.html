@@ -4,57 +4,420 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fotos que Vendem | Imagens Profissionais</title>
-    
-    <!-- Tailwind CSS -->
+    <title>Fotos que Vendem | Juliana Martins</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Babel para suportar JSX direto no navegador (comum em ambientes de prototipagem rápida sem build step) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
     <style>
-      body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: #ffffff;
-        color: #000000;
-        margin: 0;
+      body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; color: #000000; margin: 0; overflow-x: hidden; }
+      h1, h2, h3, h4 { letter-spacing: -0.03em; }
+      [nd-cloak] { display: none; }
+      .animate-float { animation: float 6s ease-in-out infinite; }
+      @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+      .bg-grid-pattern {
+        background-image: radial-gradient(circle, #000 1px, rgba(0,0,0,0) 1px);
+        background-size: 40px 40px;
+        opacity: 0.05;
       }
-      h1, h2, h3, h4 {
-        letter-spacing: -0.03em;
+      .shimmer {
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 3s infinite;
       }
-      .bg-pink-section {
-        background-color: #fff1f2;
-      }
-      .bg-dark-section {
-        background-color: #000000;
-      }
-      .text-gradient-red {
-        background: linear-gradient(135deg, #e11d48 0%, #ff4d4d 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
       }
     </style>
-
     <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@19.0.0",
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "@google/genai": "https://esm.sh/@google/genai@1.3.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0"
   }
 }
 </script>
   </head>
   <body>
     <div id="root"></div>
+    <script type="text/babel" data-type="module">
+      import React, { useState, useRef, useEffect } from 'react';
+      import ReactDOM from 'react-dom/client';
 
-    <!-- Carregamento do ponto de entrada como módulo Babel -->
-    <script type="text/babel" data-type="module" src="index.tsx"></script>
+      // --- COMPONENTES ---
+
+      const Hero = ({ onCtaClick }) => (
+        <header className="relative pt-12 pb-10 md:pt-40 md:pb-52 overflow-hidden min-h-[100vh] flex items-end md:items-center bg-stone-900">
+          <div className="absolute inset-0 bg-cover bg-center md:bg-[url('https://i.postimg.cc/Bn0St1n5/Design-sem-nome-(13).png')] bg-[url('https://i.postimg.cc/N0S7pX4y/celular.png')]"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent md:bg-gradient-to-r md:from-black/80 md:via-black/20 md:to-transparent pointer-events-none"></div>
+          <div className="container mx-auto px-6 md:px-20 lg:px-32 relative z-10">
+            <div className="flex flex-col items-center md:items-start text-center md:text-left max-w-2xl mx-auto md:mx-0">
+              <h1 className="text-5xl md:text-8xl font-black mb-4 md:mb-8 leading-[0.9] text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                Fotos que <br/><span className="bg-gradient-to-r from-red-600 via-pink-500 to-rose-400 bg-clip-text text-transparent">Vendem</span>
+              </h1>
+              <p className="text-base md:text-2xl text-white/95 mb-6 md:mb-10 max-w-xs md:max-w-lg leading-relaxed font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                Domine a criação de imagens profissionais e pare de perder vendas por causa de fotos amadoras.
+              </p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4 mb-8">
+                <span className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-white text-xs md:text-base font-bold">
+                  <span className="text-red-500 text-[8px]">●</span> Sem câmera
+                </span>
+                <span className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-white text-xs md:text-base font-bold">
+                  <span className="text-red-500 text-[8px]">●</span> Sem cenário
+                </span>
+              </div>
+              <button onClick={onCtaClick} className="w-full md:w-auto px-12 py-6 bg-green-600 hover:bg-green-500 text-white font-black rounded-2xl shadow-2xl transition-all transform active:scale-95 text-lg uppercase tracking-wider">QUERO COMEÇAR HOJE</button>
+            </div>
+          </div>
+        </header>
+      );
+
+      const Problem = ({ onCtaClick }) => (
+        <section className="py-24 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-4xl md:text-5xl font-black text-center mb-16 text-black leading-tight">Vender no digital sem <br className="hidden md:block"/> boas fotos é como gritar no escuro.</h2>
+              <div className="grid md:grid-cols-2 gap-4 mb-16">
+                {[
+                  "Sente que sua marca parece amadora perto da concorrência",
+                  "Não consegue mostrar o real valor do seu produto",
+                  "Gasta horas editando e nunca fica satisfeita",
+                  "Acha que precisa de um estúdio caro para ter imagens boas"
+                ].map((pain, i) => (
+                  <div key={i} className="flex items-center gap-5 p-8 bg-stone-50 rounded-3xl border border-stone-100 font-semibold">
+                    <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 font-bold">✕</div>
+                    <p className="text-lg text-stone-800 font-semibold">{pain}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="text-center bg-black p-12 rounded-[3rem] text-white shadow-2xl mb-16 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-pink-500 to-red-600"></div>
+                <p className="text-2xl leading-relaxed">A verdade é dura: <strong className="text-red-500 font-black">O cliente compra com os olhos.</strong><br/> Se sua foto é ruim, ele assume que seu produto também é.</p>
+              </div>
+              <div className="flex justify-center">
+                <button onClick={onCtaClick} className="bg-green-600 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg transform hover:-translate-y-1 transition-all">Mudar minha realidade visual</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+
+      const Solution = ({ onCtaClick }) => {
+        const showcaseImages = [
+          "https://i.postimg.cc/FRBBsqgP/image.png",
+          "https://i.postimg.cc/h43Xc0kw/image.png",
+          "https://i.postimg.cc/N0YMpCXm/image.png",
+          "https://i.postimg.cc/mg3Zz3nc/image.png",
+          "https://i.postimg.cc/52fymkLB/image.png"
+        ];
+        return (
+          <section className="py-24 bg-stone-50">
+            <div className="container mx-auto px-6">
+              <div className="max-w-4xl mx-auto text-center mb-20">
+                <h2 className="text-4xl md:text-6xl font-black mb-8 text-stone-900">A Solução Definitiva</h2>
+              </div>
+              <div className="grid md:grid-cols-3 gap-12 mb-24">
+                {[
+                  { n: "01", t: "Escolha o Prompt", d: "Acesse nossa biblioteca e escolha o estilo ideal." },
+                  { n: "02", t: "Insira na IA", d: "Copie e cole na ferramenta indicada. Sem configurações chatas." },
+                  { n: "03", t: "Poste e Venda", d: "Em 10 segundos sua imagem profissional está pronta." }
+                ].map((item, i) => (
+                  <div key={i} className="relative group">
+                    <div className="text-8xl font-black text-stone-200 absolute -top-12 -left-4 z-0">{item.n}</div>
+                    <div className="relative z-10">
+                      <h3 className="text-2xl font-black mb-4 text-stone-900">{item.t}</h3>
+                      <p className="text-stone-500 font-medium">{item.d}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-col lg:flex-row items-center gap-12 bg-white p-8 md:p-16 rounded-[4rem] shadow-xl border border-stone-100 mb-8 overflow-hidden">
+                <div className="w-full lg:w-5/12">
+                  <h3 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Chega de improvisos. <br/> <span className="text-red-600">Comece a profissionalizar.</span></h3>
+                  <p className="text-xl text-stone-500 font-medium mb-8">Transforme a percepção da sua marca com um clique.</p>
+                  <button onClick={onCtaClick} className="hidden lg:block bg-green-600 text-white px-10 py-5 rounded-2xl font-black uppercase shadow-lg">Quero este resultado</button>
+                </div>
+                <div className="w-full lg:w-7/12">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="aspect-[4/5] overflow-hidden rounded-3xl shadow-lg border-2 border-white"><img src={showcaseImages[0]} className="w-full h-full object-cover" /></div>
+                    <div className="aspect-[4/5] overflow-hidden rounded-3xl shadow-lg border-2 border-white md:mt-8"><img src={showcaseImages[1]} className="w-full h-full object-cover" /></div>
+                    <div className="aspect-[4/5] overflow-hidden rounded-3xl shadow-lg border-2 border-white col-span-2 md:col-span-1"><img src={showcaseImages[2]} className="w-full h-full object-cover" /></div>
+                    <div className="aspect-[4/5] overflow-hidden rounded-3xl shadow-lg border-2 border-white md:-mt-8"><img src={showcaseImages[3]} className="w-full h-full object-cover" /></div>
+                    <div className="aspect-[4/5] overflow-hidden rounded-3xl shadow-lg border-2 border-white"><img src={showcaseImages[4]} className="w-full h-full object-cover" /></div>
+                  </div>
+                </div>
+                <button onClick={onCtaClick} className="lg:hidden w-full bg-green-600 text-white px-10 py-5 rounded-2xl font-black uppercase shadow-lg">Quero este resultado</button>
+              </div>
+            </div>
+          </section>
+        );
+      };
+
+      const Benefits = ({ onCtaClick }) => {
+        const content = [
+          { title: "Catálogo Profissional", desc: "Suas fotos com nível de revista, valorizando cada detalhe do seu produto." },
+          { title: "Estética Coerente", desc: "Um feed organizado que transmite confiança e autoridade para sua marca." },
+          { title: "Velocidade Real", desc: "O que antes levava um dia inteiro de produção, agora leva segundos." },
+          { title: "Economia de Verba", desc: "Cancele o fotógrafo e o aluguel de estúdio. A IA resolve tudo para você." },
+          { title: "Engagement Viral", desc: "Imagens que param o scroll e obrigam o cliente a clicar no seu perfil." }
+        ];
+        return (
+          <section className="py-24 bg-white">
+            <div className="container mx-auto px-6">
+              <h2 className="text-4xl md:text-6xl font-black text-center mb-16 text-stone-900">O que te espera lá dentro</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                {content.map((item, i) => (
+                  <div key={i} className="p-10 rounded-[2.5rem] bg-stone-50 border border-stone-100 hover:shadow-xl transition-all group">
+                    <div className="w-14 h-14 bg-stone-900 text-white rounded-2xl flex items-center justify-center mb-8 group-hover:bg-emerald-700 transition-colors">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                    <h3 className="text-2xl font-black mb-4">{item.title}</h3>
+                    <p className="text-stone-500 font-medium leading-relaxed">{item.desc}</p>
+                  </div>
+                ))}
+                <div className="p-10 rounded-[2.5rem] bg-stone-900 text-white flex flex-col justify-center relative overflow-hidden">
+                  <h3 className="text-3xl font-black mb-6 leading-tight">Vantagem <br/> Competitiva</h3>
+                  <ul className="space-y-4 font-bold text-stone-400">
+                    <li className="flex items-center gap-3"><span className="text-emerald-500">●</span> 100% Prático</li>
+                    <li className="flex items-center gap-3"><span className="text-emerald-500">●</span> Zero custo fixo</li>
+                    <li className="flex items-center gap-3"><span className="text-emerald-500">●</span> Escala infinita</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <button onClick={onCtaClick} className="bg-green-600 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg">Quero esses benefícios</button>
+              </div>
+            </div>
+          </section>
+        );
+      };
+
+      const Testimonials = ({ onCtaClick }) => {
+        const [isPlaying, setIsPlaying] = useState(false);
+        const [isEnded, setIsEnded] = useState(false);
+        const videoRef = useRef(null);
+        
+        const togglePlay = (e) => {
+          e.stopPropagation();
+          if (videoRef.current.paused) { 
+            videoRef.current.play(); 
+            setIsPlaying(true); 
+            setIsEnded(false); 
+          } else { 
+            videoRef.current.pause(); 
+            setIsPlaying(false); 
+          }
+        };
+
+        const restartVideo = (e) => {
+          e.stopPropagation();
+          videoRef.current.currentTime = 0;
+          videoRef.current.play();
+          setIsPlaying(true);
+          setIsEnded(false);
+        };
+
+        return (
+          <section className="py-24 bg-rose-50/30 overflow-hidden text-center">
+            <div className="container mx-auto px-6">
+              <h3 className="text-3xl md:text-5xl font-black mb-16 tracking-tight uppercase">💬 O que estão dizendo</h3>
+              <div className="relative mx-auto mb-16 max-w-[320px]">
+                <div className="bg-stone-900 rounded-[3.5rem] p-3 shadow-2xl border border-white/10 relative z-10">
+                  <div className="rounded-[2.8rem] overflow-hidden bg-black aspect-[9/19.5] relative">
+                    <video 
+                      ref={videoRef} 
+                      className="w-full h-full object-cover cursor-pointer" 
+                      onClick={togglePlay}
+                      onEnded={() => {setIsEnded(true); setIsPlaying(false);}}
+                    >
+                      <source src="https://www.dropbox.com/scl/fi/9chfxw1tvcr48nt52qouc/depoimento-final.mp4?rlkey=5mw4e4eznhtqdv7pho40bq9hz&st=r7icibcw&raw=1" type="video/mp4" />
+                    </video>
+                    
+                    {!isPlaying && !isEnded && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer pointer-events-none">
+                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-red-600 shadow-2xl"><svg className="w-10 h-10 ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M4.5 2.691a1 1 0 011.53-.848l11.045 6.945a1 1 0 010 1.696L6.03 17.429a1 1 0 01-1.53-.848V2.691z" /></svg></div>
+                      </div>
+                    )}
+                    
+                    {isEnded && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md z-20">
+                        <button onClick={restartVideo} className="bg-red-600 p-6 rounded-full text-white mb-4"><svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
+                        <span className="text-white font-black text-xs tracking-widest uppercase">Ver Novamente</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <button onClick={onCtaClick} className="bg-green-600 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest shadow-lg">Quero ter resultados como ela</button>
+            </div>
+          </section>
+        );
+      };
+
+      const Pricing = ({ onCtaClick }) => (
+        <section className="py-32 bg-white relative overflow-hidden">
+          {/* Luzes de fundo decorativas */}
+          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-red-100/40 rounded-full blur-[120px] -z-10 animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-rose-100/40 rounded-full blur-[120px] -z-10 animate-pulse"></div>
+          
+          <div className="container mx-auto px-6 max-w-4xl relative z-10">
+            <div className="relative">
+              {/* Efeito de borda luminosa externa */}
+              <div className="absolute -inset-[3px] bg-gradient-to-r from-red-600 via-rose-500 to-red-600 rounded-[4rem] blur opacity-30"></div>
+              
+              <div className="relative bg-[#0a0a0a] rounded-[3.8rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] border border-white/10">
+                {/* Cabeçalho do Card */}
+                <div className="relative p-12 md:p-24 text-center border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent overflow-hidden">
+                  <div className="shimmer absolute inset-0 pointer-events-none"></div>
+                  
+                  <div className="inline-block bg-red-600 text-white text-[10px] font-black px-6 py-2.5 rounded-full uppercase tracking-[0.25em] mb-10 shadow-[0_0_25px_rgba(220,38,38,0.5)]">
+                    Oferta de Lançamento
+                  </div>
+                  
+                  <h2 className="text-4xl md:text-7xl font-black mb-12 text-white leading-[1.05] tracking-tight">
+                    Comece hoje sua <br/>
+                    <span className="bg-gradient-to-r from-red-500 via-rose-400 to-red-500 bg-clip-text text-transparent">nova era visual.</span>
+                  </h2>
+
+                  <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 max-w-2xl mx-auto">
+                    {[
+                      "Acesso Vitalício",
+                      "Biblioteca Premium",
+                      "Método Passo a Passo",
+                      "Suporte Exclusivo"
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 text-white/80 font-bold text-sm md:text-lg">
+                        <div className="flex-shrink-0 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-[10px] shadow-[0_0_15px_rgba(220,38,38,0.4)]">✓</div>
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Preço e Botão */}
+                <div className="p-12 md:p-24 bg-gradient-to-b from-[#111] to-black text-center flex flex-col items-center">
+                  <div className="mb-14">
+                    <p className="text-stone-500 line-through text-2xl font-bold mb-3">De R$ 67,00 por apenas</p>
+                    <div className="flex items-center justify-center text-green-500">
+                      <span className="text-5xl font-black mr-3 self-start mt-2">R$</span>
+                      <span className="text-8xl md:text-[11rem] font-black tracking-tighter leading-none drop-shadow-[0_10px_30px_rgba(34,197,94,0.3)]">29,90</span>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={onCtaClick} 
+                    className="group relative w-full max-w-xl bg-green-600 hover:bg-green-500 text-white py-8 md:py-10 rounded-3xl font-black text-3xl md:text-4xl shadow-[0_25px_50px_-12px_rgba(22,163,74,0.6)] transition-all duration-500 transform hover:-translate-y-2 active:scale-95 uppercase tracking-tighter"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-4">
+                      COMPRAR AGORA
+                      <svg className="w-8 h-8 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </span>
+                  </button>
+                  
+                  <div className="mt-12 flex items-center gap-3 opacity-30 text-white text-[10px] font-bold uppercase tracking-[0.2em]">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>
+                    Compra 100% Segura e Criptografada
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+
+      const Expert = () => (
+        <section className="py-32 bg-white border-t border-stone-100">
+          <div className="container mx-auto px-6 max-w-6xl">
+            <div className="flex flex-col md:flex-row items-center gap-16 md:gap-24">
+              <div className="w-full md:w-5/12 relative">
+                <img src="https://i.postimg.cc/XYzCT88f/photo.jpg" className="rounded-[3rem] shadow-2xl border border-stone-200" alt="Juliana Martins" />
+              </div>
+              <div className="w-full md:w-7/12">
+                <h2 className="text-red-600 font-black uppercase tracking-widest mb-4 text-sm">A Especialista</h2>
+                <h3 className="text-5xl md:text-7xl font-black mb-8 text-black leading-tight">Juliana Martins</h3>
+                <p className="text-xl text-stone-600 leading-relaxed font-medium mb-8">Estrategista de imagem com foco em negócios digitais femininos. Ajuda empreendedoras a transformarem estoque parado em lucro.</p>
+                <div className="border-l-4 border-red-600 pl-8 py-2 italic font-bold text-2xl text-black">"Não é sobre ter a melhor câmera, é sobre saber criar o desejo no olhar do seu cliente."</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+
+      const Guarantee = ({ onCtaClick }) => (
+        <section className="py-24 bg-white border-t border-stone-100">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl mx-auto bg-stone-50 rounded-[3rem] p-12 text-center shadow-sm border border-stone-200">
+              <div className="w-20 h-20 bg-black text-white rounded-3xl flex items-center justify-center text-3xl mx-auto mb-8 shadow-xl">🔒</div>
+              <h2 className="text-4xl font-black mb-6">Garantia Blindada</h2>
+              <p className="text-xl text-stone-600 font-medium mb-12 leading-relaxed">Você tem 7 dias de garantia para acessar e testar tudo. Se não fizer sentido, devolvemos seu dinheiro sem burocracia.</p>
+              <button onClick={onCtaClick} className="w-full md:w-auto bg-green-600 text-white px-10 py-5 rounded-2xl font-black uppercase shadow-lg">Testar sem risco</button>
+            </div>
+          </div>
+        </section>
+      );
+
+      const FAQItem = ({ question, answer }) => {
+        const [open, setOpen] = useState(false);
+        return (
+          <div className="border-b border-stone-100">
+            <button onClick={() => setOpen(!open)} className="w-full py-6 flex justify-between items-center text-left font-bold text-lg group">
+              <span className={`transition-colors ${open ? 'text-red-600' : 'text-black'}`}>{question}</span>
+              <span className={`text-2xl transition-transform ${open ? 'rotate-45 text-red-600' : 'text-stone-400'}`}>+</span>
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${open ? 'max-h-[500px] pb-6' : 'max-h-0'}`}>
+              <p className="text-stone-500 font-medium leading-relaxed">{answer}</p>
+            </div>
+          </div>
+        );
+      };
+
+      const FAQ = () => (
+        <section className="py-24 bg-white">
+          <div className="container mx-auto px-6 max-w-4xl">
+            <h2 className="text-4xl md:text-6xl font-black text-center mb-16 tracking-tight text-black">Perguntas Frequentes</h2>
+            <div className="bg-white p-8 rounded-[3rem] border border-stone-100 shadow-sm">
+              {[
+                { q: "Preciso entender de inteligência artificial?", a: "Não. Os prompts já estão prontos. Você só copia, cola e usa." },
+                { q: "Funciona para qualquer tipo de produto?", a: "Sim. Os prompts foram pensados para diferentes tipos de produtos físicos e digitais." },
+                { q: "Preciso de câmera profissional?", a: "Não. As imagens são geradas a partir dos prompts." },
+                { q: "Vou ter acesso por quanto tempo?", a: "O acesso é permanente (vitalício)." }
+              ].map((item, i) => <FAQItem key={i} question={item.q} answer={item.a} />)}
+            </div>
+          </div>
+        </section>
+      );
+
+      const Footer = () => (
+        <footer className="py-16 bg-white border-t border-rose-100 text-center">
+          <h3 className="text-3xl font-black mb-3 tracking-tighter">Fotos que <span className="text-rose-600">Vendem</span></h3>
+          <p className="text-rose-300 text-xs font-bold uppercase tracking-widest">© 2026 Juliana Martins. Todos os direitos reservados.</p>
+        </footer>
+      );
+
+      const App = () => {
+        const checkoutUrl = "https://www.ggcheckout.com/checkout/v2/nDfFhly2guuFuM4CeS62";
+        const handleCtaClick = () => { window.location.href = checkoutUrl; };
+        return (
+          <div className="min-h-screen">
+            <Hero onCtaClick={handleCtaClick} />
+            <Problem onCtaClick={handleCtaClick} />
+            <Solution onCtaClick={handleCtaClick} />
+            <Benefits onCtaClick={handleCtaClick} />
+            <Testimonials onCtaClick={handleCtaClick} />
+            <Pricing onCtaClick={handleCtaClick} />
+            <Expert />
+            <Guarantee onCtaClick={handleCtaClick} />
+            <FAQ />
+            <Footer />
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
   </body>
 </html>
