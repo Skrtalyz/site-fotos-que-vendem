@@ -1,5 +1,5 @@
 {
-  "name": "fotos-que-vendem",
+  "name": "fotos-que-vendem---site",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "react": "^19.2.3",
+    "react-dom": "^18.2.0",
     "@google/genai": "^1.35.0"
   },
   "devDependencies": {
