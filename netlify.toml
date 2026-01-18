@@ -1,7 +1,11 @@
 
 [build]
   publish = "."
-  command = "echo 'No build needed'"
+  command = "echo 'Build skipped'"
+
+[build.environment]
+  NPM_FLAGS = "--version"
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
